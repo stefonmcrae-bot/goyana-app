@@ -9,11 +9,6 @@ let theme: Theme = 'light';
 // only use 'centered' container for standalone components, never for full page apps or websites.
 let container: Container = 'none';
 
-type AppMode = 'customer' | 'driver' | 'admin';
-
-function App() {
-  const [appMode, setAppMode] = useState<AppMode>('customer');
-
   function setTheme(theme: Theme) {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -24,15 +19,17 @@ function App() {
 
   setTheme(theme);
 
-  const generatedComponent = useMemo(() => {
-    // THIS IS WHERE THE TOP LEVEL GENRATED COMPONENT WILL BE RETURNED!
-    if (appMode === 'driver') {
-      return <GoYanaDriverApp />;
-    } else if (appMode === 'admin') {
-      return <GoYanaAdminApp />;
-    }
-    return <GoYanaApp />; // %EXPORT_STATEMENT%
-  }, [appMode]);
+const generatedComponent = useMemo(() => {
+  if (loading) return <div>Loading...</div>;
+
+  if (!role) return <div>Please log in</div>;
+
+  if (role === 'customer') return <GoYanaApp />;
+  if (role === 'driver') return <GoYanaDriverApp />;
+  if (role === 'admin') return <GoYanaAdminApp />;
+
+  return <div>Invalid role</div>;
+}, [loading, role]);
 
   if (container === 'centered') {
     return (
